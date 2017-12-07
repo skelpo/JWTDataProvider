@@ -2,6 +2,7 @@ import Vapor
 import HTTP
 
 internal private(set) var services: [Service] = []
+internal private(set) var drop: Droplet!
 
 public final class Provider: Vapor.Provider {
     public static var repositoryName: String = "JWTDataProvider"
@@ -28,7 +29,10 @@ public final class Provider: Vapor.Provider {
         }
     }
     
-    public func boot(_ droplet: Droplet) throws {}
+    public func boot(_ droplet: Droplet) throws {
+        drop = droplet
+    }
+    
     public func beforeRun(_ droplet: Droplet) throws {}
     public init(config: Config) throws {}
 }
