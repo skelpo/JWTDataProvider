@@ -23,7 +23,17 @@ public final class JWTData {
             if let json = response.json {
                 try payload.set(service.name, json)
             } else {
-                try payload.set(service.name, response.body.bytes)
+                guard let bytes = response.body.bytes else {
+                     return try payload.set(service.name, nil as Any?)
+                }
+                let json: JSON
+                
+                do {
+                    json = try JSON(bytes: bytes)
+                } catch {
+                    json = JSON()
+                }
+                try payload.set(service.name, json)
             }
         })
         
