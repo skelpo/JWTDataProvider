@@ -6,6 +6,6 @@ internal struct Service {
     internal let url: String
     internal let method: Method
     internal let body: JSON
-    internal var header: [HeaderKey: String]
+    internal let header: [HeaderKey: String]
     internal let requiresAccessToken: Bool
 }
