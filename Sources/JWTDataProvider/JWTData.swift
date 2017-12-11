@@ -1,16 +1,28 @@
 import Vapor
 import JWT
+import HTTP
 
 public final class JWTData {
-    public static func fetch()throws -> JSON {
+    public static func fetch(_ accessToken: String? = nil)throws -> JSON {
         var payload = JSON()
         
         try services.forEach({ service in
-            let response = try drop.client.request(service.method, service.url)
+            var serve = service
+            
+            if serve.requiresAccessToken && accessToken != nil && serve.header[.authorization] == nil {
+                serve.header[.authorization] = "Bearer \(accessToken!)"
+            }
+            
+            let response = try drop.client.request(
+                                    serve.method,
+                                    serve.url,
+                                    serve.header,
+                                    serve.body
+                                )
             if let json = response.json {
-                try payload.set(service.name, json)
+                try payload.set(serve.name, json)
             } else {
-                try payload.set(service.name, response.body.bytes)
+                try payload.set(serve.name, response.body.bytes)
             }
         })
         
