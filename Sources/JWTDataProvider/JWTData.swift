@@ -3,29 +3,38 @@ import JWT
 import HTTP
 
 public final class JWTData {
-    public static func fetch(_ accessToken: String? = nil)throws -> JSON {
+    public static func fetch(_ accessToken: String? = nil, parameters: [String: String])throws -> JSON {
         var payload = JSON()
         
         try services.forEach({ service in
-            var serve = service
+            var header = service.header
+            let url = JWTData.replace(placeholders: parameters, in: service.url)
             
-            if serve.requiresAccessToken && accessToken != nil && serve.header[.authorization] == nil {
-                serve.header[.authorization] = "Bearer \(accessToken!)"
+            if service.requiresAccessToken && accessToken != nil && header[.authorization] == nil {
+                header[.authorization] = "Bearer \(accessToken!)"
             }
             
             let response = try drop.client.request(
-                                    serve.method,
-                                    serve.url,
-                                    serve.header,
-                                    serve.body
+                                    service.method,
+                                    url,
+                                    header,
+                                    service.body
                                 )
             if let json = response.json {
-                try payload.set(serve.name, json)
+                try payload.set(service.name, json)
             } else {
-                try payload.set(serve.name, response.body.bytes)
+                try payload.set(service.name, response.body.bytes)
             }
         })
         
         return payload
+    }
+
+    fileprivate static func replace(placeholders: [String: String], `in` string: String) -> String {
+        var str = string
+        for (name, value) in placeholders {
+            str = str.replacingOccurrences(of: "{\(name)}", with: value)
+        }
+        return str
     }
 }
