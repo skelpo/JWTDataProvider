@@ -12,21 +12,22 @@ public final class Provider: Vapor.Provider {
             throw ConfigError.missingFile("service.json")
         }
         
-        guard let jsonServices = service["services"]?.array else {
+        guard let jsonServices = service["services"]?.object else {
             throw ConfigError.missing(key: ["services"], file: "service.json", desiredType: Array<Service>.self)
         }
         
-        services = try jsonServices.map { (json) -> Service in
-            guard let name = json["name"]?.string,
-                  let url = json["url"]?.string else {
-                    throw ConfigError.missing(key: ["name", "url"], file: "service.json", desiredType: String.self)
+        services = try jsonServices.map({ (key, config) -> Service in
+            guard let url = config["url"]?.string else {
+                    throw ConfigError.missing(key: ["url"], file: "service.json", desiredType: String.self)
             }
+            let method = HTTP.Method.init(config["method"]?.string ?? "get")
+            let body = try JSON(node: config["body"])
+            let requiresAccessToken = config["requires_access_token"]?.bool ?? false
+            let headers = createHeader(config)
             
-            let method = json["method"]?.string ?? "get"
-            let httpMethod = HTTP.Method.init(method)
             
-            return Service(name: name, url: url, method: httpMethod)
-        }
+            return Service(name: key, url: url, method: method, body: body, header: headers, requiresAccessToken: requiresAccessToken)
+        })
     }
     
     public func boot(_ droplet: Droplet) throws {
@@ -37,3 +38,11 @@ public final class Provider: Vapor.Provider {
     public init(config: Config) throws {}
 }
 
+
+fileprivate func createHeader(_ config: Config) -> [HeaderKey: String] {
+    var headers: [HeaderKey: String] = [:]
+    config["headers"]?.object?.forEach({ (key, value) in
+        headers[HeaderKey(key)] = value.string
+    })
+    return headers
+}
