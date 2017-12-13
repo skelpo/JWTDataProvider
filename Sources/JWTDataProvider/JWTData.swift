@@ -21,7 +21,8 @@ public final class JWTData {
                                     service.body
                                 )
             if let json = response.json {
-                try payload.set(service.name, json)
+                let value = try service.filter.filter(json: json)
+                try payload.set(service.name, value)
             } else {
                 guard let bytes = response.body.bytes else {
                      return try payload.set(service.name, nil as Any?)
@@ -33,7 +34,8 @@ public final class JWTData {
                 } catch {
                     json = JSON()
                 }
-                try payload.set(service.name, json)
+                let value = try service.filter.filter(json: json)
+                try payload.set(service.name, value)
             }
         })
         
