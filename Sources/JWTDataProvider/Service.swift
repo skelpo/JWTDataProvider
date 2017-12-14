@@ -9,6 +9,6 @@ internal struct Service {
     internal let header: [HeaderKey: String]
     internal let requiresAccessToken: Bool
     internal let filter: String
-    internal let `default`: Any?
+    internal let `default`: Node
     
 }
