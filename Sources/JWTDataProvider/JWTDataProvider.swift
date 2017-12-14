@@ -26,7 +26,7 @@ public final class Provider: Vapor.Provider {
             let headers = createHeader(config)
             let filterConfigs = config["json_filters"]?.array
             let filters = filterConfigs?.map({ $0.string }).filter({ $0 != nil }).map({ $0! }) ?? []
-            let jsonFilter = JSONFilter(keys: filters)
+            let jsonFilter = filters.joined(separator: ".")
             
             return Service(name: key, url: url, method: method, body: body, header: headers, requiresAccessToken: requiresAccessToken, filter: jsonFilter)
         })
