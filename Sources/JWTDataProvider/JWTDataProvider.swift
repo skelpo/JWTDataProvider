@@ -24,11 +24,31 @@ public final class Provider: Vapor.Provider {
             let body = try JSON(node: config["body"])
             let requiresAccessToken = config["requires_access_token"]?.bool ?? false
             let headers = createHeader(config)
+            let `default`: Any?
+            
+            if let _ = config["default"]?.object {
+                `default` = [:]
+            } else if let _ = config["default"]?.array {
+                `default` = []
+            } else {
+                `default` = nil
+            }
+            
             let filterConfigs = config["filters"]?.array
             let filters = filterConfigs?.map({ $0.string }).filter({ $0 != nil }).map({ $0! }) ?? []
             let jsonFilter = filters.joined(separator: ".")
             
-            return Service(name: key, url: url, method: method, body: body, header: headers, requiresAccessToken: requiresAccessToken, filter: jsonFilter)
+            
+            return Service(
+                name: key,
+                url: url,
+                method: method,
+                body: body,
+                header: headers,
+                requiresAccessToken: requiresAccessToken,
+                filter: jsonFilter,
+                default: `default`
+            )
         })
     }
     
