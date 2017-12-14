@@ -13,7 +13,7 @@ extension JSON {
         guard case let StructuredData.object(new) = json.wrapped else {
             throw JSONError.badJSONStructure
         }
-        let data = try this.merging(new, uniquingKeysWith: { (one, two) -> StructuredData in
+        let data = try this.merging(new, uniquingKeysWith: { (_, _) -> StructuredData in
             throw JSONError.duplicateKey
         })
         return JSON(data)
