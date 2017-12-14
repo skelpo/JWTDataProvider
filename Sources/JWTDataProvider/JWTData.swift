@@ -34,7 +34,7 @@ public final class JWTData {
                 } catch {
                     json = JSON()
                 }
-                let value: Node = try json.get(service.filter)
+                let value: Node = try json.get(service.filter) ?? service.default
                 try payload.set(service.name, value)
             }
         })
