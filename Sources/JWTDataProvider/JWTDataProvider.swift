@@ -24,15 +24,7 @@ public final class Provider: Vapor.Provider {
             let body = try JSON(node: config["body"])
             let requiresAccessToken = config["requires_access_token"]?.bool ?? false
             let headers = createHeader(config)
-            let `default`: Node
-            
-            if let _ = config["default"]?.object {
-                `default` = [:]
-            } else if let _ = config["default"]?.array {
-                `default` = []
-            } else {
-                `default` = nil
-            }
+            let `default`: Node = try Node(node: config["default"]?.wrapped ?? Node.null)
             
             let filterConfigs = config["filters"]?.array
             let filters = filterConfigs?.map({ $0.string }).filter({ $0 != nil }).map({ $0! }) ?? []
