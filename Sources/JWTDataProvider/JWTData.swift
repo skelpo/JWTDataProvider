@@ -24,18 +24,7 @@ public final class JWTData {
                 let value: Node = try json.get(service.filter)
                 try payload.set(service.name, value)
             } else {
-                guard let bytes = response.body.bytes else {
-                     return try payload.set(service.name, service.default)
-                }
-                let json: JSON
-                
-                do {
-                    json = try JSON(bytes: bytes)
-                } catch {
-                    json = JSON()
-                }
-                let value: Node = try json.get(service.filter) ?? service.default
-                try payload.set(service.name, value)
+                try payload.set(service.name, service.default)
             }
         })
         
