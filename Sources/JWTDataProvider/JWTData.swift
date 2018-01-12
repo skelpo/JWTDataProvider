@@ -14,7 +14,7 @@ public final class JWTData {
                 header[.authorization] = "Bearer \(accessToken!)"
             }
             
-            let response = try drop.client.request(
+            let response = try client.request(
                                     service.method,
                                     url,
                                     header,

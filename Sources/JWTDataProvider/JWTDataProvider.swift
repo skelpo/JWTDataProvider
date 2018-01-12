@@ -2,7 +2,7 @@ import Vapor
 import HTTP
 
 internal private(set) var services: [Service] = []
-internal private(set) var drop: Droplet!
+internal private(set) var client: ClientFactoryProtocol!
 
 public final class Provider: Vapor.Provider {
     public static var repositoryName: String = "JWTDataProvider"
@@ -45,7 +45,7 @@ public final class Provider: Vapor.Provider {
     }
     
     public func boot(_ droplet: Droplet) throws {
-        drop = droplet
+        client = droplet.client
     }
     
     public func beforeRun(_ droplet: Droplet) throws {}
