@@ -14,12 +14,7 @@ public final class JWTData {
                 header[.authorization] = "Bearer \(accessToken!)"
             }
             
-            let response = try client.request(
-                                    service.method,
-                                    url,
-                                    header,
-                                    service.body
-                                )
+            let response = try client.request(service.method, url, header, service.body)
             if let json = response.json {
                 let value: Node = try json.get(service.filter)
                 try payload.set(service.name, value)
