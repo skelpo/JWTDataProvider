@@ -6,11 +6,11 @@ let package = Package(
         .library(name: "JWTDataProvider", targets: ["JWTDataProvider"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "2.1.0")),
-        .package(url: "https://github.com/vapor/jwt-provider.git", .exact("1.3.0"))
+        .package(url: "https://github.com/vapor/vapor.git", .branch("beta")),
+        .package(url: "https://github.com/vapor/jwt.git", .branch("beta"))
     ],
     targets: [
-        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWTProvider"]),
+        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT"]),
         .testTarget(name: "JWTDataProviderTests", dependencies: ["JWTDataProvider"]),
     ]
 )
