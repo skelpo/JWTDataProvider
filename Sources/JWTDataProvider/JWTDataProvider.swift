@@ -1,62 +1,24 @@
 import Vapor
 import HTTP
+import Foundation
 
 internal private(set) var services: [Service] = []
 internal private(set) var client: ClientFactoryProtocol!
 
 public final class Provider: Vapor.Provider {
     public static var repositoryName: String = "JWTDataProvider"
-    
-    public func boot(_ config: Config) throws {
-        guard let service = config["service"] else {
-            throw ConfigError.missingFile("service.json")
-        }
-        
-        guard let jsonServices = service["services"]?.object else {
-            throw ConfigError.missing(key: ["services"], file: "service.json", desiredType: Array<Service>.self)
-        }
-        
-        services = try jsonServices.map({ (key, config) -> Service in
-            guard let url = config["url"]?.string else {
-                    throw ConfigError.missing(key: ["url"], file: "service.json", desiredType: String.self)
-            }
-            let method = HTTP.Method.init(config["method"]?.string ?? "get")
-            let body = try JSON(node: config["body"])
-            let requiresAccessToken = config["requires_access_token"]?.bool ?? false
-            let headers = createHeader(config)
-            let `default`: Node = try Node(node: config["default"]?.wrapped ?? Node.null)
-            
-            let filterConfigs = config["filters"]?.array
-            let filters = filterConfigs?.map({ $0.string }).filter({ $0 != nil }).map({ $0! }) ?? []
-            let jsonFilter = filters.joined(separator: ".")
-            
-            
-            return Service(
-                name: key,
-                url: url,
-                method: method,
-                body: body,
-                header: headers,
-                requiresAccessToken: requiresAccessToken,
-                filter: jsonFilter,
-                default: `default`
-            )
-        })
-    }
-    
-    public func boot(_ droplet: Droplet) throws {
-        client = droplet.client
-    }
-    
-    public func beforeRun(_ droplet: Droplet) throws {}
-    public init(config: Config) throws {}
-}
 
+    /// Register all services provided by the provider here.
+    public func register(_ services: inout Services) throws {}
 
-fileprivate func createHeader(_ config: Config) -> [HeaderKey: String] {
-    var headers: [HeaderKey: String] = [:]
-    config["headers"]?.object?.forEach({ (key, value) in
-        headers[HeaderKey(key)] = value.string
-    })
-    return headers
+    /// Called after the container has initialized.
+    public func boot(_ worker: Container) throws {
+        let file = File(on: worker)
+        let decoder = JSONDecoder()
+        let root = DirectoryConfig.detect().workDir
+        
+        file.read(at: root + "/Config/services.json", chunkSize: 16384).map(to: Services.self) { (data) in
+            services = decoder.decode(Services.self, from: data).all
+        }
+    }
 }
