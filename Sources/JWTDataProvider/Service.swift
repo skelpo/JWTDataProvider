@@ -13,5 +13,5 @@ internal struct ServiceData: Decodable {
     let header: [HTTPHeaderName: String]
     let requiresAccessToken: Bool
     let filter: String
-    let `default`: Codable
+    let `default`: Codable?
 }
