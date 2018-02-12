@@ -15,4 +15,8 @@ extension JWTDataError {
             status: .internalServerError
         )
     }
+    
+    public static func badURL(_ service: DataService.Type) -> JWTDataError {
+        return self.init(identifier: "badURL", reason: "The URL for the \(String(describing: service)) is malformed", status: .internalServerError)
+    }
 }
