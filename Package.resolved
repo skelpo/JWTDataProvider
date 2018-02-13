@@ -59,18 +59,18 @@
         "package": "JSON",
         "repositoryURL": "git@github.com:skelpo/JSON.git",
         "state": {
-          "branch": "master",
-          "revision": "b5668515d88d7a7070a073d9abf81c11e5ce3576",
-          "version": null
+          "branch": null,
+          "revision": "b97d1adbc15f788d6ac6fbecbd6b3a8bb1011dd6",
+          "version": "0.6.0"
         }
       },
       {
         "package": "JWT",
         "repositoryURL": "https://github.com/vapor/jwt.git",
         "state": {
-          "branch": "beta",
+          "branch": null,
           "revision": "829ed112cef4b1ca11c266df0406f4d08e68929f",
-          "version": null
+          "version": "3.0.0-beta.1"
         }
       },
       {
@@ -122,9 +122,9 @@
         "package": "Vapor",
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
-          "branch": "beta",
+          "branch": null,
           "revision": "b4cb228133f6f2188a4d08b0150e0f968297f5c5",
-          "version": null
+          "version": "3.0.0-beta.2"
         }
       }
     ]
