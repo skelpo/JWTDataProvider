@@ -2,12 +2,6 @@ import Service
 import HTTP
 @_exported import JSON
 
-public protocol DataServices: Service {
-    var services: [String: DataService] { get }
-    
-    init()
-}
-
 public protocol DataService: Service {
     var url: String { get }
     var method: HTTPMethod { get }
