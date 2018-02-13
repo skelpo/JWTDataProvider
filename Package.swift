@@ -11,7 +11,7 @@ let package = Package(
         .package(url: "git@github.com:skelpo/JSON.git", .branch("master"))
     ],
     targets: [
-        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT", "JSON"]),
+        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT", "JSONKit"]),
         .testTarget(name: "JWTDataProviderTests", dependencies: ["JWTDataProvider"]),
     ]
 )
