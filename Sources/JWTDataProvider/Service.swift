@@ -10,6 +10,4 @@ public protocol DataService: Service {
     var requiresAccessToken: Bool { get }
     var jsonPath: [String] { get }
     var `default`: JSON { get }
-    
-    init()
 }
