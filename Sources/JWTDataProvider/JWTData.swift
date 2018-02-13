@@ -29,7 +29,7 @@ extension Request {
             return try client.respond(to: request).flatMap(to: JSON.self, { (response) in
                 return try response.content.decode(JSON.self)
             }).map(to: Void.self) { content in
-                try body.set(name, content)
+                try body.set(name, content.element(at: data.jsonPath))
             }.catchMap() { _ in
                 try body.set(name, data.default)
             }
