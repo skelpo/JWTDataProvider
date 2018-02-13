@@ -60,7 +60,7 @@
         "repositoryURL": "git@github.com:skelpo/JSON.git",
         "state": {
           "branch": "master",
-          "revision": "cde0dabc0e9a22301e2fc7b06dc7628a23d957fd",
+          "revision": "b5668515d88d7a7070a073d9abf81c11e5ce3576",
           "version": null
         }
       },
@@ -123,7 +123,7 @@
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
           "branch": "beta",
-          "revision": "ed3aeea1c8c0d6669d13b84a64e6228d2db3e2b9",
+          "revision": "b4cb228133f6f2188a4d08b0150e0f968297f5c5",
           "version": null
         }
       }
