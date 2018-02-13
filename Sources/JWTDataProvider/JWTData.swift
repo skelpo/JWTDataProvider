@@ -1,66 +1,51 @@
 import Vapor
-import JWT
-import HTTP
-import JSON
+import JSONKit
 import Foundation
+
+typealias EndpointResult = (name: String, response: Response)
+typealias ParsedEndpoint = (name: String, json: JSON)
 
 extension Request {
     public func fetch<Payload>(
         _ accessToken: String? = nil,
-        with parameters: [String: String],
-        as payloadType: Payload.Type
-    )throws -> Future<Payload> where Payload: JWTPayload {
-        let result = Promise(Payload.self)
+        with parameters: [String: String] = [:],
+        as payloadType: Payload.Type = Payload.self
+    )throws -> Future<Payload> where Payload: Codable {
         let client = try self.make(Client.self)
-        let serviceContainer = try self.make(DataServiceContainer.self)
+        let serviceContainer = try self.make(DataServices.self)
         
-        var responses: [Future<Response>] = []
-        var names: [String] = []
-        
-        try serviceContainer.services.forEach({ service in
-            var header = service.data.headers
-            let url = replace(placeholders: parameters, in: service.data.url)
-            
-            if service.data.requiresAccessToken {
-                if accessToken != nil && header[.authorization] == nil {
-                    header[.authorization] = "Bearer \(accessToken!)"
+        return try serviceContainer.services.map({ (name, data) -> Future<EndpointResult> in
+            guard let url: URI = URI(rawValue: replace(placeholders: parameters, in: data.url)) else {
+                throw JWTDataError.badURL(type(of: serviceContainer.services[name]!))
+            }
+            var headers = data.headers
+
+            if data.requiresAccessToken && headers[.authorization] == nil {
+                if let token = accessToken {
+                    headers[.authorization] = token
                 } else {
-                    result.fail(JSONError.noAccessToken(url))
-                    print("[JWTDataProvider - Bad API Usage: \(Date())] No access token passed in for service '\(service.name)' requiring access token.")
-                    return
+                    throw JWTDataError.noAccessToken(url.rawValue)
                 }
             }
-            
-            let httpRequest = HTTPRequest(
-                method: service.data.method,
-                uri: URI(url),
-                headers: service.data.headers,
-                body: service.data.body
-            )
+
+            let httpRequest = HTTPRequest(method: data.method, uri: url, headers: headers, body: data.body)
             let request = Request(http: httpRequest, using: self.superContainer)
-            let response = try client.respond(to: request)
             
-            responses.append(response)
-            names.append(service.name)
-        })
-        
-        return responses.flatten().flatMap(to: [JSON].self) { (reses)  in
-            return try reses.map({ (response) in
-                return try response.content.decode(JSON.self)
-            }).flatten()
-        }.map(to: JSON.self) { (objects) in
-            var data: [String: JSON] = [:]
-            
-            zip(names, objects).forEach({ (serviceResult) in
-                let (name, object) = serviceResult
-                data[name] = object
+            return try client.respond(to: request).map(to: EndpointResult.self, { (response) -> EndpointResult in
+                return (name: name, response: response)
             })
-            
-            return JSON.object(data)
-        }.flatMap(to: Payload.self) { (json) in
-            let data = try JSONEncoder().encode(json)
-            try result.complete(JSONDecoder().decode(Payload.self, from: data))
-            return result.future
+        }).flatten().flatMap(to: [ParsedEndpoint].self) { (results) -> Future<[ParsedEndpoint]> in
+            return try results.map({ (result) -> Future<ParsedEndpoint> in
+                return try result.response.content.decode(JSON.self).map(to: ParsedEndpoint.self) { json in
+                    return (name: result.name, json: json)
+                }
+            }).flatten()
+        }.map(to: Payload.self) { endpoints in
+            let body = endpoints.reduce(into: [:], { (structure, line) in
+                structure[line.name] = line.json
+            })
+            let json = JSON.object(body)
+            return try Payload(json: json)
         }
     }
 }
