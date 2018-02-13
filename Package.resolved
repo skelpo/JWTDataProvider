@@ -110,6 +110,15 @@
         }
       },
       {
+        "package": "Validation",
+        "repositoryURL": "https://github.com/vapor/validation.git",
+        "state": {
+          "branch": null,
+          "revision": "f044a587bc72d0fbf12d3530b503f4eca24c8054",
+          "version": "2.0.0-beta.1"
+        }
+      },
+      {
         "package": "Vapor",
         "repositoryURL": "https://github.com/vapor/vapor.git",
         "state": {
