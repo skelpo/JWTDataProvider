@@ -12,11 +12,11 @@ extension Request {
         as payloadType: Payload.Type = Payload.self
     )throws -> Future<Payload> where Payload: Codable {
         let client = try self.make(Client.self)
-        let serviceContainer = try self.make(DataServices.self)
+        let serviceContainer = try self.make(JWTDataConfig.self)
         
-        return try serviceContainer.services.map({ (name, data) -> Future<EndpointResult> in
+        return try serviceContainer.dataServices.map({ (name, data) -> Future<EndpointResult> in
             guard let url: URI = URI(rawValue: replace(placeholders: parameters, in: data.url)) else {
-                throw JWTDataError.badURL(type(of: serviceContainer.services[name]!))
+                throw JWTDataError.badURL(type(of: serviceContainer.dataServices[name]!))
             }
             var headers = data.headers
 
