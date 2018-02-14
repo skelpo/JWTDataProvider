@@ -1,5 +1,4 @@
-import Service
-import HTTP
+import Vapor
 @_exported import JSON
 
 public protocol DataService: Service {
@@ -37,3 +36,11 @@ extension DataService {
         return nil
     }
 }
+
+extension HTTPBody: HTTPBodyRepresentable {
+    public func makeBody() throws -> HTTPBody {
+        return self
+    }
+}
+
+extension HTTPBody: Content {}
