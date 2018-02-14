@@ -4,7 +4,7 @@ import Vapor
 public protocol DataService: Service {
     var url: String { get }
     var method: HTTPMethod { get }
-    var body: HTTPBody { get }
+    var body: HTTPBodyRepresentable { get }
     var headers: HTTPHeaders { get }
     var requiresAccessToken: Bool { get }
     var jsonPath: [String] { get }
@@ -16,7 +16,7 @@ extension DataService {
         return .get
     }
     
-    public var body: HTTPBody {
+    public var body: HTTPBodyRepresentable {
         return HTTPBody()
     }
     
