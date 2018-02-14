@@ -22,11 +22,9 @@ extension Request {
                 }
                 headers[.authorization] = "Bearer \(token)"
             }
-
-            let httpRequest = HTTPRequest(method: data.method, uri: url, headers: headers, body: data.body)
-            let request = Request(http: httpRequest, using: self.superContainer)
             
-            return try client.respond(to: request).flatMap(to: JSON.self, { (response) in
+            let response = try client.send(data.method, headers: headers, to: url, content: data.body.makeBody())
+            return response.flatMap(to: JSON.self, { (response) in
                 return try response.content.decode(JSON.self)
             }).map(to: Void.self) { content in
                 try body.set(name, content.element(at: data.jsonPath))
