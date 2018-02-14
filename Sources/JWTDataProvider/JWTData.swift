@@ -3,7 +3,7 @@ import JSONKit
 import Foundation
 
 extension Request {
-    public func fetch<Payload>(
+    public func payloadData<Payload>(
         _ accessToken: String? = nil,
         with parameters: [String: String] = [:],
         as payloadType: Payload.Type = Payload.self
