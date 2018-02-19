@@ -6,9 +6,9 @@ let package = Package(
         .library(name: "JWTDataProvider", targets: ["JWTDataProvider"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", .exact("3.0.0-beta.2")),
-        .package(url: "https://github.com/vapor/jwt.git", .exact("3.0.0-beta.1")),
-        .package(url: "git@github.com:skelpo/JSON.git", .exact("0.7.0"))
+        .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0-beta.3.1.2"),
+        .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-beta.1.1"),
+        .package(url: "git@github.com:skelpo/JSON.git", from: "0.7.1")
     ],
     targets: [
         .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT", "JSONKit"]),
