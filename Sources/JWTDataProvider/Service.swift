@@ -1,5 +1,5 @@
 import Vapor
-@_exported import JSON
+@_exported import JSONKit
 
 public protocol DataService: Service {
     var url: String { get }
