@@ -1,10 +1,12 @@
 import Vapor
 @_exported import JSONKit
 
+extension Data: Content {}
+
 public protocol DataService: Service {
     var url: String { get }
     var method: HTTPMethod { get }
-    var body: HTTPBodyRepresentable { get }
+    var body: Data { get }
     var headers: HTTPHeaders { get }
     var requiresAccessToken: Bool { get }
     var jsonPath: [String] { get }
@@ -13,11 +15,11 @@ public protocol DataService: Service {
 
 extension DataService {
     public var method: HTTPMethod {
-        return .get
+        return .GET
     }
     
-    public var body: HTTPBodyRepresentable {
-        return HTTPBody()
+    public var body: Data {
+        return Data()
     }
     
     public var headers: HTTPHeaders {
@@ -42,5 +44,3 @@ extension HTTPBody: HTTPBodyRepresentable {
         return self
     }
 }
-
-extension HTTPBody: Content {}

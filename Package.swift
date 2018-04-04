@@ -8,10 +8,11 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0-rc"),
         .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc"),
+        .package(url: "https://github.com/vapor/service.git", from: "1.0.0-rc"),
         .package(url: "git@github.com:skelpo/JSON.git", from: "0.10.0")
     ],
     targets: [
-        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT", "JSONKit"]),
+        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT", "JSONKit", "Service"]),
         .testTarget(name: "JWTDataProviderTests", dependencies: ["JWTDataProvider"]),
     ]
 )
