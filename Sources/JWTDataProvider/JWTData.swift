@@ -13,19 +13,16 @@ extension Request {
         var body: JSON = [:]
         
         return try serviceContainer.dataServices.map({ (name, data) in
-            guard let url = URL(string: replace(placeholders: parameters, in: data.url)) else {
-                throw JWTDataError(identifier: "badURLStructure", reason: "The URL '\(data.url)' in the services configuration is invalid", status: .internalServerError)
-            }
             var headers = data.headers
 
             if data.requiresAccessToken && headers[.authorization].first == nil {
                 guard let token = accessToken else {
-                    throw JWTDataError.noAccessToken(url.absoluteString)
+                    throw JWTDataError.noAccessToken(data.url.replacing(placeholders: parameters))
                 }
                 headers.replaceOrAdd(name: .authorization, value: "Bearer \(token)")
             }
             
-            let response = client.send(data.method, headers: headers, to: url, content: data.body)
+            let response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters), content: data.body)
             return response.flatMap(to: JSON.self, { (response) in
                 return try response.content.decode(JSON.self)
             }).map(to: Void.self) { content in
@@ -39,10 +36,12 @@ extension Request {
     }
 }
 
-fileprivate func replace(placeholders: [String: String], `in` string: String) -> String {
-    var str = string
-    for (name, value) in placeholders {
-        str = str.replacingOccurrences(of: "{\(name)}", with: value)
+extension String {
+    internal func replacing(placeholders: [String: String]) -> String {
+        var str = self
+        for (name, value) in placeholders {
+            str = str.replacingOccurrences(of: "{\(name)}", with: value)
+        }
+        return str
     }
-    return str
 }
