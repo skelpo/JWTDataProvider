@@ -38,9 +38,3 @@ extension DataService {
         return nil
     }
 }
-
-extension HTTPBody: HTTPBodyRepresentable {
-    public func makeBody() throws -> HTTPBody {
-        return self
-    }
-}
