@@ -1,13 +1,13 @@
 import Service
 
 public struct JWTDataConfig: ServiceType {
-    var dataServices: [String: DataService]
+    var dataServices: [String: RemoteDataClient]
     
-    public init(_ services: [String: DataService] = [:]) {
+    public init(_ services: [String: RemoteDataClient] = [:]) {
         self.dataServices = services
     }
     
-    public mutating func add(service: DataService, named name: String) {
+    public mutating func add(service: RemoteDataClient, named name: String) {
         self.dataServices[name] = service
     }
     
