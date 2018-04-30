@@ -22,7 +22,13 @@ extension Request {
                 headers.replaceOrAdd(name: .authorization, value: "Bearer \(token)")
             }
             
-            let response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters), content: data.body)
+            let response: Future<Response>
+            if data.method == .POST || data.method == .PUT || data.method == .PATCH {
+                response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters), content: data.body)
+            } else {
+                response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters))
+            }
+            
             return response.flatMap(to: JSON.self, { (response) in
                 return try response.content.decode(JSON.self)
             }).map(to: Void.self) { content in
