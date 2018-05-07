@@ -24,7 +24,9 @@ extension Request {
             
             let response: Future<Response>
             if data.method == .POST || data.method == .PUT || data.method == .PATCH {
-                response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters), content: data.body)
+                response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters)) { request in
+                    try request.content.encode(data.body)
+                }
             } else {
                 response = client.send(data.method, headers: headers, to: data.url.replacing(placeholders: parameters))
             }
