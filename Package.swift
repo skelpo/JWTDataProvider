@@ -6,11 +6,12 @@ let package = Package(
         .library(name: "JWTDataProvider", targets: ["JWTDataProvider"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/vapor.git", .upToNextMajor(from: "2.1.0")),
-        .package(url: "https://github.com/vapor/jwt-provider.git", .exact("1.3.0"))
+        .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+        .package(url: "https://github.com/vapor/jwt.git", from: "3.0.0-rc"),
+        .package(url: "https://github.com/skelpo/JSON.git", from: "0.13.0")
     ],
     targets: [
-        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWTProvider"]),
+        .target(name: "JWTDataProvider", dependencies: ["Vapor", "JWT", "JSONKit"]),
         .testTarget(name: "JWTDataProviderTests", dependencies: ["JWTDataProvider"]),
     ]
 )

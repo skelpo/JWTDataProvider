@@ -1,13 +1,22 @@
-import HTTP
-import JSON
+import Vapor
+@_exported import JSONKit
 
-internal struct Service {
-    let name: String
-    let url: String
-    let method: Method
-    let body: JSON
-    let header: [HeaderKey: String]
-    let requiresAccessToken: Bool
-    let filter: String
-    let `default`: Node
+public struct RemoteDataClient: Service {
+    public var url: String
+    public var method: HTTPMethod
+    public var body: JSON
+    public var headers: HTTPHeaders
+    public var requiresAccessToken: Bool
+    public var jsonPath: [String]
+    public var `default`: JSON
+    
+    public init(url: String, method: HTTPMethod = .GET, body: JSON = [:], headers: HTTPHeaders = [:], requiresAccessToken: Bool = false, jsonPath: [String] = [], default: JSON = nil) {
+        self.url = url
+        self.method = method
+        self.body = body
+        self.headers = headers
+        self.requiresAccessToken = requiresAccessToken
+        self.jsonPath = jsonPath
+        self.default = `default`
+    }
 }
